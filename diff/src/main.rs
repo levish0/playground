@@ -1,4 +1,4 @@
-use similar::{ChangeTag, TextDiff};
+use similar::{ChangeTag, TextDiff, Algorithm};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -46,7 +46,7 @@ impl DocumentBlame {
         self.update_blame();
     }
 
-    /// blame 정보 계산 및 업데이트
+    /// blame 정보 계산 및 업데이트 (Patience Diff 사용)
     fn update_blame(&mut self) {
         if self.versions.is_empty() {
             return;
@@ -70,11 +70,14 @@ impl DocumentBlame {
             return;
         }
 
-        // 이전 버전과 현재 버전 비교
+        // 이전 버전과 현재 버전 비교 (Patience Diff 사용)
         let prev_version = &self.versions[self.versions.len() - 2];
         let curr_version = &self.versions[self.versions.len() - 1];
 
-        let diff = TextDiff::from_lines(&prev_version.content, &curr_version.content);
+        // Patience 알고리즘으로 diff 생성
+        let diff = TextDiff::configure()
+            .algorithm(Algorithm::Patience)
+            .diff_lines(&prev_version.content, &curr_version.content);
 
         // 새로운 blame 정보 구성
         let mut new_blame = Vec::new();
@@ -154,6 +157,11 @@ impl DocumentBlame {
 
         stats
     }
+
+    /// 사용 중인 diff 알고리즘 정보
+    pub fn diff_algorithm(&self) -> &'static str {
+        "Patience"
+    }
 }
 
 fn format_timestamp(timestamp: u64) -> String {
@@ -166,8 +174,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_document_blame() {
+    fn test_document_blame_with_patience_diff() {
         let mut blame = DocumentBlame::new();
+
+        println!("Using {} diff algorithm", blame.diff_algorithm());
 
         // 첫 번째 버전
         blame.add_version(
@@ -196,11 +206,36 @@ mod tests {
         let stats = blame.get_author_stats();
         println!("Author stats: {:?}", stats);
     }
+
+    #[test]
+    fn test_patience_diff_vs_myers() {
+        // Patience diff가 더 나은 결과를 보여주는 예제
+        let mut patience_blame = DocumentBlame::new();
+
+        // 첫 번째 버전
+        patience_blame.add_version(
+            "A\nB\nC\nD\nE\nF\nG".to_string(),
+            "alice".to_string(),
+            1000,
+        );
+
+        // 두 번째 버전 - 코드 블록 이동
+        patience_blame.add_version(
+            "A\nC\nD\nE\nB\nF\nG".to_string(),
+            "bob".to_string(),
+            2000,
+        );
+
+        println!("Patience Diff Result:");
+        println!("{}", patience_blame.format_blame());
+    }
 }
 
 // 사용 예제
 fn main() {
     let mut document_blame = DocumentBlame::new();
+
+    println!("Document Blame using {} diff algorithm\n", document_blame.diff_algorithm());
 
     // 문서의 각 버전을 순서대로 추가
     document_blame.add_version(
@@ -210,7 +245,7 @@ fn main() {
     );
 
     document_blame.add_version(
-        "Hello World\nwhat the fuck This is the modified first line\nThis is a new line\nEnd of document".to_string(),
+        "Hello World\nThis is the modified first line\nThis is a new line\nEnd of document".to_string(),
         "Bob".to_string(),
         1641081600, // 2022-01-02
     );

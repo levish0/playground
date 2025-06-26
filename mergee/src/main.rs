@@ -2,65 +2,35 @@ use merge3::{CustomMarkers, Merge3};
 
 fn main() {
     let base = vec![
-        "a\n"
+        "    println!(\"debug\");\n",
+        "    let x = 1;\n",
+        "    println!(\"debug\");\n",
+        "    let y = 2;\n",
+        "    println!(\"debug\");\n",
+        "    let z = 3;\n",
+        "    println!(\"debug\");\n",
     ];
 
     let this = vec![
-        "#include <stdio.h>\n",
-        "\n",
-        "// Frobs foo heartily\n",
-        "int frobnitz(int foo)\n",
-        "{\n",
-        "    int i;\n",
-        "    for(i = 0; i < 10; i++)\n",
-        "    {\n",
-        "        printf(\"Your answer is: \");\n",
-        "        printf(\"%d\\n\", foo);\n",
-        "    }\n",
-        "}\n",
-        "\n",
-        "int fact(int n)\n",
-        "{\n",
-        "    if(n > 1)\n",
-        "    {\n",
-        "        return fact(n-1) * n;\n",
-        "    }\n",
-        "    return 1;\n",
-        "}\n",
-        "\n",
-        "int main(int argc, char **argv)\n",
-        "{\n",
-        "    frobnitz(fact(10));\n",
-        "}\n",
+        "    println!(\"debug\");\n",
+        "    let x = 100;\n",        // 같은 라인을 다르게 수정
+        "    println!(\"debug\");\n",
+        "    let y = 200;\n",        // 같은 라인을 다르게 수정
+        "    println!(\"debug\");\n",
+        "    let z = 3;\n",
+        "    println!(\"debug\");\n",
     ];
 
     let other = vec![
-        "#include <stdio.h>\n",
-        "\n",
-        "int fib(int n)\n",
-        "{\n",
-        "    if(n > 2)\n",
-        "    {\n",
-        "        return fib(n-1) + fib(n-2);\n",
-        "    }\n",
-        "    return 1;\n",
-        "}\n",
-        "\n",
-        "// Frobs foo heartily\n",
-        "int frobnitz(int foo)\n",
-        "{\n",
-        "    int i;\n",
-        "    for(i = 0; i < 10; i++)\n",
-        "    {\n",
-        "        printf(\"%d\\n\", foo);\n",
-        "    }\n",
-        "}\n",
-        "\n",
-        "int main(int argc, char **argv)\n",
-        "{\n",
-        "    frobnitz(fib(10));\n",
-        "}\n",
+        "    println!(\"debug\");\n",
+        "    let x = 999;\n",        // 또 다르게 수정 
+        "    println!(\"debug\");\n",
+        "    let y = 888;\n",        // 또 다르게 수정
+        "    println!(\"debug\");\n",
+        "    let z = 3;\n",
+        "    println!(\"debug\");\n",
     ];
+
 
     let m3 = Merge3::with_patience_diff(&base, &this, &other);
 
