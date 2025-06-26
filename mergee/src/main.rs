@@ -2,33 +2,68 @@ use merge3::{CustomMarkers, Merge3};
 
 fn main() {
     let base = vec![
-        "line A\n",
-        "line B\n",
-        "line C\n",
-        "line D\n",
-        "line E\n",
+        "a\n"
     ];
 
     let this = vec![
-        "line A\n",  // conflict #1
-        "line B\n",                   // same
-        "line C modified by THIS\n",  // conflict #2
-        "line D\n",                   // same
-        "line E modified by THIS\n",  // conflict #3
+        "#include <stdio.h>\n",
+        "\n",
+        "// Frobs foo heartily\n",
+        "int frobnitz(int foo)\n",
+        "{\n",
+        "    int i;\n",
+        "    for(i = 0; i < 10; i++)\n",
+        "    {\n",
+        "        printf(\"Your answer is: \");\n",
+        "        printf(\"%d\\n\", foo);\n",
+        "    }\n",
+        "}\n",
+        "\n",
+        "int fact(int n)\n",
+        "{\n",
+        "    if(n > 1)\n",
+        "    {\n",
+        "        return fact(n-1) * n;\n",
+        "    }\n",
+        "    return 1;\n",
+        "}\n",
+        "\n",
+        "int main(int argc, char **argv)\n",
+        "{\n",
+        "    frobnitz(fact(10));\n",
+        "}\n",
     ];
 
     let other = vec![
-        "line A\n", // conflict #1
-        "line B\n",                   // same
-        "line C modified by OTHER\n", // conflict #2
-        "line D\n",                   // same
-        "line E modified by OTHER\n", // conflict #3
+        "#include <stdio.h>\n",
+        "\n",
+        "int fib(int n)\n",
+        "{\n",
+        "    if(n > 2)\n",
+        "    {\n",
+        "        return fib(n-1) + fib(n-2);\n",
+        "    }\n",
+        "    return 1;\n",
+        "}\n",
+        "\n",
+        "// Frobs foo heartily\n",
+        "int frobnitz(int foo)\n",
+        "{\n",
+        "    int i;\n",
+        "    for(i = 0; i < 10; i++)\n",
+        "    {\n",
+        "        printf(\"%d\\n\", foo);\n",
+        "    }\n",
+        "}\n",
+        "\n",
+        "int main(int argc, char **argv)\n",
+        "{\n",
+        "    frobnitz(fib(10));\n",
+        "}\n",
     ];
 
+    let m3 = Merge3::with_patience_diff(&base, &this, &other);
 
-    let m3 = Merge3::new(&base, &this, &other);
-
-    // 직접 마커 지정 (없애거나 원하는 문자열로 변경 가능)
     let custom_markers = CustomMarkers {
         start_marker: Option::from("<<<<<<<< HEAD\n"),
         mid_marker: Option::from("========\n"),

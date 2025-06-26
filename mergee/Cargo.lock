@@ -124,6 +124,7 @@ checksum = "b4b277bc3c7e2bc163abc6c0069f53715b52dc34442c0e807cc8758c7113524f"
 dependencies = [
  "clap",
  "difflib",
+ "patiencediff",
 ]
 
 [[package]]
@@ -138,6 +139,12 @@ name = "once_cell_polyfill"
 version = "1.70.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4895175b425cb1f87721b59f0f286c2092bd4af812243672510e1ac53e2e0ad"
+
+[[package]]
+name = "patiencediff"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "394e807f00c3c5fef02f4761d6abcb30f40e6595fd7f7e44eeb6dd6cb26e1110"
 
 [[package]]
 name = "proc-macro2"
