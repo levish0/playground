@@ -2,33 +2,15 @@ use merge3::{CustomMarkers, Merge3};
 
 fn main() {
     let base = vec![
-        "    println!(\"debug\");\n",
-        "    let x = 1;\n",
-        "    println!(\"debug\");\n",
-        "    let y = 2;\n",
-        "    println!(\"debug\");\n",
-        "    let z = 3;\n",
-        "    println!(\"debug\");\n",
+        "what!!!\n"
     ];
 
     let this = vec![
-        "    println!(\"debug\");\n",
-        "    let x = 100;\n",        // 같은 라인을 다르게 수정
-        "    println!(\"debug\");\n",
-        "    let y = 200;\n",        // 같은 라인을 다르게 수정
-        "    println!(\"debug\");\n",
-        "    let z = 3;\n",
-        "    println!(\"debug\");\n",
+        "string\n"
     ];
 
     let other = vec![
-        "    println!(\"debug\");\n",
-        "    let x = 999;\n",        // 또 다르게 수정 
-        "    println!(\"debug\");\n",
-        "    let y = 888;\n",        // 또 다르게 수정
-        "    println!(\"debug\");\n",
-        "    let z = 3;\n",
-        "    println!(\"debug\");\n",
+        "striawefwefng\n"
     ];
 
 
