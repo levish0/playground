@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+difflib = "0.4.0"
 merge3 = { version = "0.2.0", features = ["patiencediff"] }
