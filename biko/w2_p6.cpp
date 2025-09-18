@@ -1,18 +1,20 @@
 #include <iostream>
 #include <deque>
 #include <vector>
-using namespace std;
 
 int main() {
-    int N, K;
-    cin >> N >> K;
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    vector<int> A(N);
+    int N, K;
+    std::cin >> N >> K;
+
+    std::vector<int> A(N);
     for (int i = 0; i < N; i++) {
-        cin >> A[i];
+        std::cin >> A[i];
     }
 
-    deque<int> dq;
+    std::deque<int> dq;
 
     for (int i = 0; i < K; i++) {
         while (!dq.empty() && A[dq.back()] <= A[i]) {
@@ -21,7 +23,8 @@ int main() {
         dq.push_back(i);
     }
 
-    cout << A[dq.front()] << "\n";
+    std::cout << A[dq.front()] << "\n";
+
 
     for (int i = K; i < N; i++) {
         while (!dq.empty() && dq.front() <= i - K) {
@@ -33,7 +36,7 @@ int main() {
         }
 
         dq.push_back(i);
-        cout << A[dq.front()] << "\n";
+        std::cout << A[dq.front()] << "\n";
     }
     
     return 0;
