@@ -35,30 +35,31 @@ for i in range(1, N):
     xs = [x[0] for x in left_list]
     m = len(left_list)
 
-    # 미리 계산
-    pref_up = [-1] * m
+    # 왼쪽부터 누적 최댓값
+    left_up_max = [-1] * m
     for w in range(m):
         v = left_list[w][1]
-        pref_up[w] = v if w == 0 else max(pref_up[w-1], v)
+        left_up_max[w] = v if w == 0 else max(left_up_max[w-1], v)
 
-    suff_down = [-1] * m
+    # 오른쪽부터 누적 최댓값
+    right_down_max = [-1] * m
     for w in range(m-1, -1, -1):
         v = left_list[w][2]
-        suff_down[w] = v if w == m-1 else max(suff_down[w+1], v)
+        right_down_max[w] = v if w == m-1 else max(right_down_max[w+1], v)
 
     # right
     for k in range(i+1, N+1):
         y = p[k] ^ p[i]
 
         w = bisect_left(xs, y) - 1
-        if w >= 0 and pref_up[w] > -1:
-            c = pref_up[w] + 1
+        if w >= 0 and left_up_max[w] > -1:
+            c = left_up_max[w] + 1
             if c > UP[k][i+1]:
                 UP[k][i+1] = c
 
         w_2 = bisect_right(xs, y)
-        if w_2 < m and suff_down[w_2] > -1:
-            c2 = suff_down[w_2] + 1
+        if w_2 < m and right_down_max[w_2] > -1:
+            c2 = right_down_max[w_2] + 1
             if c2 > DOWN[k][i+1]:
                 DOWN[k][i+1] = c2
 

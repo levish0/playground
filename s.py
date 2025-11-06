@@ -1,59 +1,39 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import sys
 
-# 1. 삼각 펄스 h(t) 정의
-def h(t):
-    """
-    삼각 펄스 h(t): [-1, 1]에서 정의되며, 최대값 h(0)=1
-    """
-    # np.where는 조건에 따라 다른 값을 반환합니다.
-    return np.where(
-        (t >= -1) & (t <= 1),  # -1 <= t <= 1 조건
-        1 - np.abs(t),         # 해당 구간: 1 - |t|
-        0                      # 그 외 구간: 0
-    )
+def solve_knapsack():
+    # 짐 목록: (무게, 가치)
+    luggage = [
+        (10, 17),
+        (9, 15),
+        (7, 12),
+        (4, 7),
+        (3, 6)
+    ]
+    # 최대 허용 무게
+    capacity = 15
 
-# 2. 컨볼루션 결과 y(t) 정의
-def y_t(t, T, num_terms=10):
-    """
-    y(t) = sum_{k=-inf}^{+inf} h(t - kT)를 유한한 항(num_terms)으로 근사하여 계산
-    """
-    y_sum = np.zeros_like(t, dtype=float)
-    # k = -num_terms/2 부터 num_terms/2 까지 합산합니다.
-    for k in range(-num_terms // 2, num_terms // 2 + 1):
-        y_sum += h(t - k * T)
-    return y_sum
+    # DP 테이블(배열)을 초기화합니다.
+    # dp[w]는 무게 한도가 w일 때의 최대 가치를 저장합니다.
+    # 인덱스 0부터 15까지 총 16개의 공간이 필요합니다.
+    dp = [0] * (capacity + 1)
 
-# 3. 시간 벡터 정의
-t = np.linspace(-6, 6, 1000)
+    # 각 짐(item)에 대해 순회합니다.
+    for weight, cost in luggage:
+        # DP 테이블을 뒤에서부터 앞으로 갱신합니다.
+        # (같은 짐을 여러 번 선택하는 것을 방지하기 위해 역순으로 순회)
+        # w는 현재 고려하는 무게 한도를 의미합니다.
+        for w in range(capacity, weight - 1, -1):
+            # 짐을 선택하는 경우와 선택하지 않는 경우 중 더 이득이 되는 값을 선택합니다.
+            # 1. 짐을 선택하지 않는 경우: 가치는 그대로 dp[w]
+            # 2. 짐을 선택하는 경우: (현재 짐의 가치) + (현재 짐의 무게를 뺀 무게 한도에서의 최대 가치)
+            #    = cost + dp[w - weight]
+            dp[w] = max(dp[w], dp[w - weight] + cost)
 
-# 4. 각 T 값에 대한 계산 및 그래프 그리기
-T_values = {'(a) T = 4 (겹침 없음)': 4,
-            '(b) T = 2 (경계)': 2,
-            '(c) T = 3/2 = 1.5 (겹침)': 1.5,
-            '(d) T = 1 (최대 겹침)': 1}
+    # 모든 짐을 고려한 후, dp[capacity] (dp[15])에
+    # 15kg 한도 내에서의 최대 가치가 저장됩니다.
+    max_cost = dp[capacity]
+    print(f"주어진 짐 목록: {luggage}")
+    print(f"무게 한도: {capacity}kg")
+    print(f"달성 가능한 최대 가치 합계: {max_cost}")
 
-fig, axes = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
-fig.suptitle(r'Convolution Result: $y(t) = x(t) * h(t) = \sum_{k} h(t - kT)$', fontsize=16)
-
-for i, (title, T) in enumerate(T_values.items()):
-    ax = axes[i]
-    # y(t) 계산
-    y_result = y_t(t, T)
-
-    # 그래프 그리기
-    ax.plot(t, y_result, label=f'T = {T}', color='blue')
-
-    # 축 설정
-    ax.set_title(title, loc='left')
-    ax.set_ylabel(r'$y(t)$', rotation=0, labelpad=20)
-    ax.grid(True, linestyle='--', alpha=0.6)
-    ax.set_yticks(np.arange(0, np.max(y_result) + 1, 1))
-
-    # 주요 펄스의 중심 위치 표시 (k*T)
-    center_points = np.arange(-5 * T, 5 * T, T)
-    ax.axhline(0, color='black', linewidth=0.5)
-
-axes[-1].set_xlabel(r'$t$')
-plt.tight_layout(rect=[0, 0.03, 1, 0.97]) # 제목 공간 확보
-plt.show()
+solve_knapsack()
