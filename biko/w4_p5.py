@@ -1,19 +1,24 @@
-MOD = 998244353
-INV6 = pow(6, MOD - 2, MOD)
+import sys
+import bisect
 
-def solve():
-    import sys
-    input = sys.stdin.readline
-    n = int(input().strip())
+n = int(sys.stdin.readline())
+points = []
 
-    dp = [0] * (n + 1)
-    dp[n] = 1  # n장의 카드에서 시작
+# X=x−y / Y=x+y
+for _ in range(n):
+    x, y = map(int, input().split())
+    tx = x - y
+    ty = x + y
+    points.append((tx, -ty))
 
-    for i in range(n, 1, -1):
-        cnt = i
-        next_i = i * 5 // 6
-        dp[next_i] = (dp[next_i] + dp[i]) % MOD
+points.sort()
+LIS = []
+for x, y in points:
+    y = -y
+    pos = bisect.bisect_left(LIS, y)
+    if pos == len(LIS):
+        LIS.append(y)
+    else:
+        LIS[pos] = y
 
-    inv_sum = pow(sum(dp[1:]) % MOD, MOD - 2, MOD)
-    for i in range(1, n + 1):
-        print(dp[i] * inv_sum % MOD)
+print(len(LIS))
