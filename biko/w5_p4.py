@@ -1,32 +1,40 @@
 import sys
-import heapq
 
 N = int(sys.stdin.readline())
-L = list(map(int, sys.stdin.readline().split()))
-Q = int(sys.stdin.readline())
-K = list(map(int, sys.stdin.readline().split()))
-max_k = max(K)
+L = []
+max_end = 0
 
+for _ in range(N):
+    a, b, c = map(int, sys.stdin.readline().split())
+    L.append((a,b,c))
+    if b > max_end:
+        max_end = b
 
-heap = []
-for i, li in enumerate(L):
-    heap.append((-float(li), i, 1)) # 최대 힙
-heapq.heapify(heap)
+def count(t):
+    total = 0
+    for start, end, step in L:
+        if t < start:
+            # t가 start보다 작으면 해당 수열에 등장할 수는 없음
+            continue
+        up = min(t, end)
+        total += (up - start) // step + 1
+    return total % 2 == 1
 
-ans = [0.0] * (max_k + 1)
-total = 0
+l, h = 0, max_end
+answer = -1
+while l <= h:
+    mid = (l + h) // 2
+    if count(mid) == 1:
+        answer = mid
+        h = mid - 1
+    else:
+        l = mid + 1
 
-while total < max_k:
-    neg_v, i, p = heapq.heappop(heap)
-    v = -neg_v  # 실제 길이
-
-    total += 1
-    ans[total] = v
-
-    np = p + 1 # 쪼갬
-    heapq.heappush(heap, (-(L[i] / np), i, np))
-
-res = []
-for k in K:
-    res.append("{:.18f}".format(ans[k]))
-print("\n".join(res))
+if answer == -1:
+    print(-1)
+else:
+    count = 0
+    for start, end, step in L:
+        if start <= answer <= end and (answer - start) % step == 0:
+            count += 1
+    print(answer, count)
